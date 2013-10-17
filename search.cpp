@@ -2,11 +2,12 @@
 #include <queue>
 #include <vector>
 #include <bitset>
-//#include <Crypto++> //need to download it...
+#include "Crypto++/des.h" //need to download it...
 
 using namespace std;
 
 bool cont=false; //global variable
+
 
 bitset<12> checkRainbowTable(bitset<24>, vector<bitset<12> >, vector<bitset<24> >);
 bitset<12> realPassword(bitset<12>, bitset<24>);
@@ -36,16 +37,16 @@ int main()
    //make RT
    for(int i=0;i<4096;i++)
    {
-      if(dico[i][1]==0) 
+      if(dico[i][1]==0)
       {
 	 pass[0]=dico[i][0];
-	 for(int j=1;j<=4;j++) 
+	 for(int j=1;j<=4;j++)
 	 {
 	    fingerprint=hashing(pass[j-1]);
 	    pass[j-1]=reduction(fingerprint,j);
 	 }
 	 fingerprint=hashing(pass[4]);
-	 password=checkRainbowTable(fingerprint,RTp,RTf); //check if the fingerprint is already in the table, in order to avoid collisions
+	 if(i!=0) password=checkRainbowTable(fingerprint,RTp,RTf); //check if the fingerprint is already in the table, in order to avoid collisions
 	 if(cont==true)
 	    cont=false;
 	 else
@@ -54,7 +55,7 @@ int main()
 	    RTf.push_back(fingerprint);
 	    for(int j=0;j<4;j++)
 	       dico[pass[j].to_ulong()][1]=1;
-	 } 
+	 }
       }
    }
 
@@ -139,6 +140,35 @@ bitset<24> hashing(bitset<12> password)
 {
    const bitset<64> msg = 0x0000000000000000;
    bitset<24> fingerprint;
+   int key[64];
+
+   int parity1 = (password[0] + password[1] + password[2] + password[3] + password[4] + 1) % 2;
+   int parity2 = (password[5] + password[6] + password[7] + password[8] + password[9] + password[10] + password[11] + 1) % 2;
+
+// key = //56 bits key + 8 parity bits, given password is the 12 least significant bits of the key.
+//{
+//       0, 0, 0, 0, 0, 0, 0, 1,
+//       0, 0, 0, 0, 0, 0, 0, 1,
+//       0, 0, 0, 0, 0, 0, 0, 1,
+//       0, 0, 0, 0, 0, 0, 0, 1,
+//       0, 0, 0, 0, 0, 0, 0, 1,
+//       0, 0, 0, 0, 0, 0, 0, 1,
+//       0, 0, password[0], password[1], password[2], password[3], password[4], parity1,
+//       password[5], password[6], password[7], password[8], password[9], password[10], password[11], parity2,
+//   };
+
+   int i;
+   for (i = 0; i < 7; i++) key[i] = 0; key[i] = 1; // Real men know why.
+   for (i = 8; i < 15; i++) key[i] = 0; key[i] = 1;
+   for (i = 16; i < 23; i++) key[i] = 0; key[i] = 1;
+   for (i = 24; i < 31; i++) key[i] = 0; key[i] = 1;
+   for (i = 32; i < 39; i++) key[i] = 0; key[i] = 1;
+   for (i = 40; i < 47; i++) key[i] = 0; key[i] = 1;
+   key[48] = 0; key[49] = 0; key[50] = password[0]; key[51] = password[1]; key[52] = password[2]; key[53] = password[3]; key[54] = password[4]; key[55] = parity1;
+   key[56] = password[5]; key[57] = password[6]; key[58] = password[7]; key[59] = password[8]; key[60] = password[9]; key[61] = password[10]; key[62] = password[11]; key[63] = parity2;
+
+
+
    fingerprint=0x001000;
    return fingerprint;
 }
