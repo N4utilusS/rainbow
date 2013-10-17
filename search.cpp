@@ -3,6 +3,7 @@
 #include <vector>
 #include <bitset>
 #include "Crypto++/des.h" //need to download it...
+#include "DESNote.h"    // Yééééééééé !!!!
 
 using namespace std;
 
@@ -108,12 +109,12 @@ int main()
 
 // Check if the stolenFingerprint is in the rainbow table, and if yes, return the corresponding password
 
-bitset<12> checkRainbowTable(bitset<24> stolenFingerprint, vector<bitset<12> > RTp, vector<bitset<24> > RTf)
+bitset<12> checkRainbowTable(bitset<24> fingerprint, vector<bitset<12> > RTp, vector<bitset<24> > RTf)
 {
     bitset<12> password;
     int length = RTf.size();//if we put RTf.size() in the loop for, we got a warning...
     for(int i=0; i < length; i++)
-        if(stolenFingerprint == RTf[i])
+        if(fingerprint == RTf[i])
         {
             password = RTp[i];
             foundInRT = true;
@@ -141,12 +142,15 @@ bitset<12> realPassword(bitset<12> password, bitset<24> stolenFingerprint)
 }
 
 /**************************************** NEED TO IMPLEMENT FROM HERE *******************************************/
-//hashing
+// Hashing
+
 bitset<24> hashing(bitset<12> password)
 {
     const bitset<64> msg = 0x0000000000000000;
     bitset<24> fingerprint;
     int key[64];
+    
+    // Odd parity bits
     
     int parity1 = (password[0] + password[1] + password[2] + password[3] + password[4] + 1) % 2;
     int parity2 = (password[5] + password[6] + password[7] + password[8] + password[9] + password[10] + password[11] + 1) % 2;
@@ -165,7 +169,7 @@ bitset<24> hashing(bitset<12> password)
     
     int i;
     for (i = 0; i < 7; i++) key[i] = 0; key[i] = 1; // Real men know why.
-    for (i = 8; i < 15; i++) key[i] = 0; key[i] = 1;
+    for (i = 8; i < 15; i++) key[i] = 0; key[i] = 1;    // While(1) break; missing.
     for (i = 16; i < 23; i++) key[i] = 0; key[i] = 1;
     for (i = 24; i < 31; i++) key[i] = 0; key[i] = 1;
     for (i = 32; i < 39; i++) key[i] = 0; key[i] = 1;
@@ -173,11 +177,13 @@ bitset<24> hashing(bitset<12> password)
     key[48] = 0; key[49] = 0; key[50] = password[0]; key[51] = password[1]; key[52] = password[2]; key[53] = password[3]; key[54] = password[4]; key[55] = parity1;
     key[56] = password[5]; key[57] = password[6]; key[58] = password[7]; key[59] = password[8]; key[60] = password[9]; key[61] = password[10]; key[62] = password[11]; key[63] = parity2;
     
-    
+    fingerprint = DES(msg, key);
     
     fingerprint=0x001000;
     return fingerprint;
 }
+
+
 
 
 bitset<12> reduction(bitset<24> fingerprint, int i)
