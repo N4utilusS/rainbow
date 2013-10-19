@@ -5,6 +5,9 @@
 #include "Crypto++/des.h" //need to download it...
 #include "DESNote.h"    // Yééééééééé !!!!
 
+#include "Dictionnary.h"
+#include "RainbowTable.h"
+
 using namespace std;
 
 bool foundInRT = false; //global variable
@@ -25,45 +28,45 @@ int main()
     bitset<24> fingerprint;
     bitset<24> stolenFingerprint=0x0f0000;
     queue<bitset<24> > fifo;
-    
+
     //Rainbow Table
-    vector<bitset<12> > RTp(0);
-    vector<bitset<24> > RTf(0);
-    
+    RainbowTable *RT = new RainbowTable();
+    //vector<bitset<12> > RTp(0);
+    //vector<bitset<24> > RTf(0);
+
     //make dico
-    bitset<12> dico[4096][2];
+    Dictionnary *dico = new Dictionnary();
     bitset<12> pass[4];
-    for(int i=0;i<4096;i++)
-        dico[i][0]=i;
+
     //make RT
     for(int i=0;i<4096;i++)
     {
-        if(dico[i][1]==0)
+        if(dico->getBit(i, 1)==0)
         {
-            pass[0]=dico[i][0];
+            pass[0]=dico->getBit(i, 0);
             for(int j=1;j<=4;j++)
             {
                 fingerprint=hashing(pass[j-1]);
                 pass[j-1]=reduction(fingerprint,j);
             }
             fingerprint=hashing(pass[4]);
-            if(i!=0) password=checkRainbowTable(fingerprint,RTp,RTf); //check if the fingerprint is already in the table, in order to avoid collisions
+            if(i!=0) password=RT->checkRainbowTable(fingerprint,foundInRT); //check if the fingerprint is already in the table, in order to avoid collisions
             if(foundInRT==true)
                 foundInRT=false;
             else
             {
-                RTp.push_back(dico[i][0]);
-                RTf.push_back(fingerprint);
+                RT->push_backP(dico->getBit(i, 0));
+                RT->push_backF(fingerprint);
                 for(int j=0;j<4;j++)
-                    dico[pass[j].to_ulong()][1]=1;
+                    dico->setBit(pass[j].to_ulong(), 1, 1);
             }
         }
     }
-    
+
     // Main algorithm
-    
-    password = checkRainbowTable(stolenFingerprint,RTp,RTf);
-    
+
+    password = RT->checkRainbowTable(stolenFingerprint, foundInRT);
+
     if(foundInRT)    // stolenFingerprint found in RT, step 1
     {
         password = realPassword(password,stolenFingerprint);
@@ -81,9 +84,9 @@ int main()
                 password = reduction(fingerprint,i);
                 fingerprint = hashing(password);
             }
-            
-            password = checkRainbowTable(fingerprint,RTp,RTf);  // Is this new fp in the RT ?
-            
+
+            password = RT->checkRainbowTable(fingerprint, foundInRT);  // Is this new fp in the RT ?
+
             if(foundInRT)    // Fingerprint found in RT
             {
                 password = realPassword(password,fingerprint);
@@ -94,7 +97,7 @@ int main()
                 j++;
                 fifo.push(fingerprint);
             }
-            
+
             if(j == 4)  // Why not 5 ?
             {
                 j = 1;
@@ -103,25 +106,29 @@ int main()
             }
         }
     }
+    RT->~RainbowTable();
+    RT = NULL;
+    dico->~Dictionnary();
+    dico = NULL;
     return 0;
 }
 
 
 // Check if the stolenFingerprint is in the rainbow table, and if yes, return the corresponding password
 
-bitset<12> checkRainbowTable(bitset<24> fingerprint, vector<bitset<12> > RTp, vector<bitset<24> > RTf)
-{
-    bitset<12> password;
-    int length = RTf.size();//if we put RTf.size() in the loop for, we got a warning...
-    for(int i=0; i < length; i++)
-        if(fingerprint == RTf[i])
-        {
-            password = RTp[i];
-            foundInRT = true;
-            break;
-        }
-    return password;    // Returns the password corresponding to the fingerprint.
-}
+//bitset<12> checkRainbowTable(bitset<24> fingerprint, vector<bitset<12> > RTp, vector<bitset<24> > RTf)
+//{
+//    bitset<12> password;
+//    int length = RTf.size();//if we put RTf.size() in the loop for, we got a warning...
+//    for(int i=0; i < length; i++)
+//        if(fingerprint == RTf[i])
+//        {
+//            password = RTp[i];
+//            foundInRT = true;
+//            break;
+//        }
+//    return password;    // Returns the password corresponding to the fingerprint.
+//}
 
 // Returns the password that corresponds to the stolenFingerprint
 
@@ -132,7 +139,7 @@ bitset<12> realPassword(bitset<12> password, bitset<24> stolenFingerprint)
     for(int i = 1; i <= 4; i++) //!--! 4?? if not, do a while(a)
     {
         fingerprint = hashing(password);
-        
+
         if(fingerprint == stolenFingerprint)
             break;
         else
@@ -149,12 +156,12 @@ bitset<24> hashing(bitset<12> password)
     const bitset<64> msg = 0x0000000000000000;
     bitset<24> fingerprint;
     int key[64];
-    
+
     // Odd parity bits
-    
+
     int parity1 = (password[0] + password[1] + password[2] + password[3] + password[4] + 1) % 2;
     int parity2 = (password[5] + password[6] + password[7] + password[8] + password[9] + password[10] + password[11] + 1) % 2;
-    
+
     // key = //56 bits key + 8 parity bits, given password is the 12 least significant bits of the key.
     //{
     //       0, 0, 0, 0, 0, 0, 0, 1,
@@ -166,7 +173,7 @@ bitset<24> hashing(bitset<12> password)
     //       0, 0, password[0], password[1], password[2], password[3], password[4], parity1,
     //       password[5], password[6], password[7], password[8], password[9], password[10], password[11], parity2,
     //   };
-    
+
     int i;
     for (i = 0; i < 7; i++) key[i] = 0; key[i] = 1; // Real men know why.
     for (i = 8; i < 15; i++) key[i] = 0; key[i] = 1;    // While(1) break; missing.
@@ -176,9 +183,9 @@ bitset<24> hashing(bitset<12> password)
     for (i = 40; i < 47; i++) key[i] = 0; key[i] = 1;
     key[48] = 0; key[49] = 0; key[50] = password[0]; key[51] = password[1]; key[52] = password[2]; key[53] = password[3]; key[54] = password[4]; key[55] = parity1;
     key[56] = password[5]; key[57] = password[6]; key[58] = password[7]; key[59] = password[8]; key[60] = password[9]; key[61] = password[10]; key[62] = password[11]; key[63] = parity2;
-    
+
     fingerprint = DES(msg, key);
-    
+
     fingerprint=0x001000;
     return fingerprint;
 }
