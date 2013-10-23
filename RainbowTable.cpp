@@ -38,7 +38,7 @@ bitset<12> RainbowTable::checkRainbowTable(bitset<24> fingerprint, bool& foundIn
     unsigned int end = (unsigned int) RTf.size()-1, beg = 0, dic = (beg+end)/2;
     
     
-    for (; beg+1 == end; dic = (beg+end)/2) {
+    for (; beg+1 != end; dic = (beg+end)/2) {
         
         if (fingerprint.to_ulong() > RTf[dic].to_ulong())
             beg = dic;
@@ -73,19 +73,25 @@ bitset<12> RainbowTable::realPassword(bitset<12> password, bitset<24> stolenFing
 
 void RainbowTable::addEntry(int i, bitset<24> fingerprint)
 {
-    unsigned int end = (unsigned int) RTf.size()-1, beg = 0, dic = (beg+end)/2;
-    
-    
-    for (; beg+1 == end; dic = (beg+end)/2) {
-        
-        if (fingerprint.to_ulong() >= RTf[dic].to_ulong())
-            beg = dic;
-        else
-            end = dic;
-        
+	unsigned int place = 0;
+	
+	if (RTf.size() > 0) {
+	    unsigned int max = (unsigned int) RTf.size()-1, min = 0, mid = (min+max)/2;
+	    
+	    
+	    for (; min < max; mid = (min+max)/2) {
+	        
+	        if (fingerprint.to_ulong() > RTf[mid].to_ulong())
+	            min = mid + 1;
+	        else
+	            max = mid;
+	        
+	    }
+
+		place = (fingerprint.to_ulong() < RTf[min].to_ulong()) ? min : min+1;
     }
-    
-    RTf.insert(RTf.begin()+end, fingerprint);
-    RTp.insert(RTp.begin()+end, i);
+	
+    RTf.insert(RTf.begin()+place, fingerprint);
+    RTp.insert(RTp.begin()+place, i);
 }
 
