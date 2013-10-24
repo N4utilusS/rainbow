@@ -33,27 +33,31 @@ RainbowTable::RainbowTable(Dictionary &dico)
     
 }
 
+// Returns the password corresponding to the fingerprint (valid iff foundInRT = true).
 bitset<12> RainbowTable::checkRainbowTable(bitset<24> fingerprint, bool& foundInRT) const
 {
-    unsigned int end = (unsigned int) RTf.size()-1, beg = 0, dic = (beg+end)/2;
-    
-    
-    for (; beg+1 != end; dic = (beg+end)/2) {
+    if (RTf.size() > 0) {
+	    unsigned int max = (unsigned int) RTf.size()-1, min = 0, mid = (min+max)/2;
+	    
+	    
+	    for (; min < max; mid = (min+max)/2) {
+	        
+	        if (fingerprint.to_ulong() > RTf[mid].to_ulong())
+	            min = mid + 1;
+	        else
+	            max = mid;
+	        
+	    }
         
-        if (fingerprint.to_ulong() > RTf[dic].to_ulong())
-            beg = dic;
-        else if (fingerprint.to_ulong() < RTf[dic].to_ulong())
-            end = dic;
-        else
-            return RTp[dic];
-        
+		if (RTf[min].to_ulong() == fingerprint.to_ulong()) {
+            foundInRT = true;
+            return RTp[min];
+        }
     }
+
     
-    if (fingerprint.to_ulong() == RTf[beg].to_ulong())
-        foundInRT = true;
-    
-    
-    return RTp[beg];    // Returns the password corresponding to the fingerprint (valid iff foundInRT = true).
+    foundInRT = false;
+    return 0;
 }
 
 bitset<12> RainbowTable::realPassword(bitset<12> password, bitset<24> stolenFingerprint) const
