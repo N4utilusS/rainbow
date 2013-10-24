@@ -5,7 +5,7 @@ RainbowTable::RainbowTable(Dictionary &dico)
     bitset<24> fingerprint;
     bitset<12> pass[5], password;
     bool foundInRT = false;
-    
+
     for(int i=0; i<4096; i++)
     {
         if(dico.getAvailability(i)) // If this entry is available.
@@ -16,10 +16,10 @@ RainbowTable::RainbowTable(Dictionary &dico)
                 fingerprint = hashing(pass[j-1]);
                 pass[j] = reduction(fingerprint,j);
             }
-            
+
             fingerprint = hashing(pass[4]);
             password = checkRainbowTable(fingerprint,foundInRT); //check if the fingerprint is already in the table, in order to avoid collisions
-            
+
             if(foundInRT)
                 foundInRT = false;
             else
@@ -30,7 +30,7 @@ RainbowTable::RainbowTable(Dictionary &dico)
             }
         }
     }
-    
+
 }
 
 // Returns the password corresponding to the fingerprint (valid iff foundInRT = true).
@@ -38,35 +38,35 @@ bitset<12> RainbowTable::checkRainbowTable(bitset<24> fingerprint, bool& foundIn
 {
     if (RTf.size() > 0) {
 	    unsigned int max = (unsigned int) RTf.size()-1, min = 0, mid = (min+max)/2;
-	    
-	    
+
+
 	    for (; min < max; mid = (min+max)/2) {
-	        
+
 	        if (fingerprint.to_ulong() > RTf[mid].to_ulong())
 	            min = mid + 1;
 	        else
 	            max = mid;
-	        
+
 	    }
-        
+
 		if (RTf[min].to_ulong() == fingerprint.to_ulong()) {
             foundInRT = true;
             return RTp[min];
         }
     }
 
-    
+
     foundInRT = false;
     return 0;
 }
 
-bitset<12> RainbowTable::realPassword(bitset<12> password, bitset<24> stolenFingerprint) const
+bitset<12> RainbowTable::realPassword(bitset<12> password, bitset<24> stolenFingerprint) const // Step one of the algorithm
 {
     bitset<24> fingerprint;
     for(int i = 1; i <= 4; i++) //!--! 4?? if not, do a while(a)
     {
         fingerprint = hashing(password);
-        
+
         if(fingerprint == stolenFingerprint)
             break;
         else
@@ -78,23 +78,23 @@ bitset<12> RainbowTable::realPassword(bitset<12> password, bitset<24> stolenFing
 void RainbowTable::addEntry(int i, bitset<24> fingerprint)
 {
 	unsigned int place = 0;
-	
+
 	if (RTf.size() > 0) {
 	    unsigned int max = (unsigned int) RTf.size()-1, min = 0, mid = (min+max)/2;
-	    
-	    
+
+
 	    for (; min < max; mid = (min+max)/2) {
-	        
+
 	        if (fingerprint.to_ulong() > RTf[mid].to_ulong())
 	            min = mid + 1;
 	        else
 	            max = mid;
-	        
+
 	    }
 
 		place = (fingerprint.to_ulong() < RTf[min].to_ulong()) ? min : min+1;
     }
-	
+
     RTf.insert(RTf.begin()+place, fingerprint);
     RTp.insert(RTp.begin()+place, i);
 }

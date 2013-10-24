@@ -9,17 +9,32 @@ using namespace std;
 int main()
 {
     bitset<24> stolenFingerprint = 0x0f0000;
-    
-    CrackerRainbow CR;
-    
-    CR.findPassword(stolenFingerprint);
-    
-    vector<bitset<12>> v = CR.getKeysFound();
-    
-    for (vector<bitset<12>>::iterator it = v.begin(); it < v.end(); it++)
-        cout << *it << endl;
-    
-    
+
+    bool play = true;
+    char answer;
+
+    do{
+        cout << "Please enter your fingerprint" << endl;
+        for (int i = 0; i < 24; i++) cin >> stolenFingerprint[i];
+
+        CrackerRainbow CR;
+
+        CR.findPassword(stolenFingerprint);
+
+        vector<bitset<12>> v = CR.getKeysFound();
+
+        for (vector<bitset<12>>::iterator it = v.begin(); it < v.end(); it++)
+            cout << *it << endl;
+
+        cout << endl << "Do you want to play again ? (y/n)" << endl;
+        cin >> answer;
+        if(answer == "n") play = false;
+
+    } while(play);
+
+
+
+
     return 0;
 }
 
