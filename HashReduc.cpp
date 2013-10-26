@@ -34,7 +34,7 @@ bitset<24> hashing(bitset<12> password)
     
     // Encryption
 
-	ECB_Mode<DES>::Encryption e(key,sizeof(key));
+	CryptoPP::ECB_Mode<CryptoPP::DES>::Encryption e(key,sizeof(key));
     e.ProcessData(cypheredText,plainText,sizeof(plainText));
 
 	// Convert a byte tabular into a bitset.

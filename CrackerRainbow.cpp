@@ -19,22 +19,23 @@ void CrackerRainbow::findPassword(bitset<24> stolenFingerprint)
     bitset<12> password;
     bitset<24> fingerprint, fingerprintPrime;
     queue<bitset<24> > fifo;
+    
+    keysFound.clear();  // Clear the vector for a new run.
+    
 
     password = RT->checkRainbowTable(stolenFingerprint, foundInRT);
 
     if(foundInRT)    // stolenFingerprint found in RT, step 1
     {
         password = RT->realPassword(password,stolenFingerprint);
-        cout << password << endl;
+        keysFound.push_back(password);
+        //cout << "Found a key : " << password << endl;
     }
-    else        // stolenFingerprint not found in RT, step 2 (ALGO À REMPLACER !!!!)
+    else            // stolenFingerprint not found in RT, step 2
     {
-        bool a = true;
-        fingerprintPrime = stolenFingerprint;
-        int j = 1;
-        while(a)
+        for(int j = 4; j >= 1; --j)
         {
-            fingerprint = fingerprintPrime;
+            fingerprint = stolenFingerprint;
             for(int i = j; i <= 4; i++)
             {
                 password = reduction(fingerprint,i);
@@ -45,21 +46,19 @@ void CrackerRainbow::findPassword(bitset<24> stolenFingerprint)
 
             if(foundInRT)    // Fingerprint found in RT
             {
-                password = RT->realPassword(password,fingerprint);
-                a = false;
-            }
-            else
-            {
-                j++;
-                fifo.push(fingerprint);
+                password = RT->realPassword(password,stolenFingerprint);
+                
+                bool toBeAdded = true;  // Voir si le password n'est pas déjà dans la liste.
+                for (vector<bitset<12> >::iterator it = keysFound.begin(); it < keysFound.end() && toBeAdded; it++)
+                    toBeAdded = (*it != password);
+                
+                if (toBeAdded) {
+                    keysFound.push_back(password);
+                    //cout << "Found a key : " << password << endl;
+                }
+                
             }
 
-            if(j == 5)
-            {
-                j = 1;
-                fingerprintPrime = fifo.front();
-                fifo.pop();
-            }
         }
     }
 

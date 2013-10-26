@@ -6,6 +6,8 @@
 #include "crypto++/osrng.h"
 #include "crypto++/hex.h"
 #include <fstream>
+#include <bitset>
+#include <vector>
 
 #include <iomanip>
 #include <cstdio>
@@ -18,7 +20,7 @@ vector<bitset<24> > writePossRed(vector<bitset<24> >);
 vector<bitset<24> > readPossRed();
 vector< vector<int> > initialCollision(vector< vector<int> >, bitset<24> [4096]);
 void displayInitialCollision(vector< vector<int> >);
-void checkReduction(vector<bitset<24> >, bitset<24> [4096], int[][2]);
+void checkReduction(vector<bitset<24> >, bitset<24> [4096], short int[]);
 bitset<12> reduction(bitset<24>,bitset<24>);
 bitset<24> hashing(bitset<12> password);
 
@@ -42,16 +44,15 @@ int main(int argc, char* argv[])
     
     //display all the passwords which produce some collisions
     displayInitialCollision(tabCollisions);
+    //~tabCollisions;
     
     //check all the reduction functions
     int size=PossRed.size();
-    cout << PossRed.size() << endl;
-    int tabCol[size][2];
-    cout << "blabla" << endl;
+    short int tabCol[size];
     checkReduction(PossRed, tabFingerprint, tabCol);
 
     
-//    bitset<12> p0("000010001000"), p1("111011010001");
+//    bitset<12> p0(string("000010001000")), p1(string("111011010001"));
 //    cout << "Hashing " << endl << hashing(p0) << endl << hashing(p1) << endl;
 	
 	
@@ -88,8 +89,8 @@ int main(int argc, char* argv[])
 
 bitset<24> hashing(bitset<12> password)
 {
-	byte plainText[8] = {0,0,0,0,0,0,0,0};
-	byte cypheredText[8];
+   byte plainText[8] = {0,0,0,0,0,0,0,0};
+   byte cypheredText[8];
     bitset<24> fingerprint;
     
     
@@ -265,46 +266,89 @@ void displayInitialCollision(vector< vector<int> > tabCollisions)
 }
 
 //check all the reduction functions
-void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096], int tabCol[][2])
+void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096], short int tabCol[])
 {
     bitset<12> password;
     int size=PossRed.size(), pass=0; //size=2,704,156
     int tabPass[4096];
     //int tabCol[size][2];
     bool goodRed=true;
+    int fourGoodRed=0;
     
     //init
-    for(int i=0; i<4096; i++)
-        tabPass[i]=0;
+    // for(int i=0; i<4096; i++)
+    //   tabPass[i]=0;
     for(int i=0; i<size; i++)
     {
-        tabCol[i][0]=0; //will contain number of collisions
-        tabCol[i][1]=i; //will contain the "function reduction" (which can be accessed by PossRed[i]) which corresponds to this number of collisions
+        tabCol[i]=0; //will contain number of collisions
+        // tabCol[i][1]=i; //will contain the "function reduction" (which can be accessed by PossRed[i]) which corresponds to this number of collisions
     }
     
     //main algo to check all the reduction functions
     //!--! will need to use tabCollisions and a counter...
-    for(int i=0; i<size; i++)
+    
+    int **best = new int*[10]();
+    for (int i = 0; i < 10; ++i) {
+        best[i] = new int[3]();
+        best[i][0] = -1;
+        best[i][1] = 10;
+        best[i][2] = 0;
+    }
+    int presentBest = 10, temp;
+    
+    int idPass = 0;
+    
+    for(int i=0, k = 0; i<size; i++, k++)
     {
-        cout << i << endl;
         for(int j=0; j<4096; j++)
             tabPass[j]=0;
-        
-        for(int j=0; j<4096 && goodRed==true; j++) //4096*2,704,156 = 11,076,222,976 //it will take some times before getting a result...
+        idPass = 0;
+        for(int j=0; j<4096; j++) //4096*2,704,156 = 11,076,222,976 //it will take some times before getting a result...
         {
+            
             password=reduction(tabFingerprint[j],PossRed[i]);
             if(password==j) //i.e. if password=initial password then it's not good
-                goodRed=false;
+            {
+                idPass++;
+            }
             else
             {
                 pass=password.to_ulong();
                 tabPass[pass]++;
                 if(tabPass[pass]>1) //then collision
-                    tabCol[i][0]++;
+                    tabCol[i]++;
             }
         }
-        goodRed=true;
+        if((temp = idPass + tabCol[i]) <= presentBest)
+        {
+            for (int k = 0; k < 10; ++k) {
+                if (temp < (best[k][1] + best[k][2])) {
+                    delete [] best[9];
+                    for (int l = 9; l > k; --l) {
+                        best[l] = best[l-1];
+                    }
+                    presentBest = best[9][1] + best[9][2];
+                }
+            }
+            
+        }
+        //cout
+        if (k == 10000) {
+            cout << endl << i << endl;
+            k = 0;
+            for (int i = 0; i < 10; ++i) {
+                cout << best[i][0] << "-" << best[i][1] << "-" << best[i][2] << endl;
+            }
+        }
     }
+    
+    cout << endl;
+    for (int i = 0; i < 10; ++i) {
+        cout << best[i][0] << "-" << best[i][1] << "-" << best[i][2] << endl;
+        delete [] best[i];
+    }
+    delete [] best;
+    
 }
 //just need to sort this tabCol
 

@@ -1,13 +1,18 @@
-projet : FindReduction.o Dictionary.o HashReduc.o RainbowTable.o CrackerRainbow.o main.o g++ -o projet FindReduction.o Dictionary.o HashReduc.o RainbowTable.o CrackerRainbow.o main.o
+projet: main.o Dictionary.o HashReduc.o RainbowTable.o CrackerRainbow.o
+	g++ main.o Dictionary.o HashReduc.o RainbowTable.o CrackerRainbow.o -o projet
 
-main.o : main.cpp CrackerRainbow.h g++ -O2 main.cpp -L/Users/Alexis/Desktop/crypto++/ -lcryptopp - o main.o
+main.o: main.cpp CrackerRainbow.h 
+	g++ -Wall -c main.cpp
 
-CrackerRainbow.o : CrackerRainbow.cpp CrackerRainbow.h g++ -O2 CrackerRainbow.cpp -L/Users/Alexis/Desktop/crypto++/ -lcryptopp - o CrackerRainbow.o
+CrackerRainbow.o: CrackerRainbow.cpp CrackerRainbow.h RainbowTable.h Dictionary.h
+	g++ -Wall -c CrackerRainbow.cpp
 
-RainbowTable.o : RainbowTable.cpp RainbowTable.h g++ -O2 RainbowTable.cpp -L/Users/Alexis/Desktop/crypto++/ -lcryptopp - o RainbowTable.o
+RainbowTable.o: RainbowTable.cpp RainbowTable.h Dictionary.h HashReduc.h
+	g++ -Wall -c RainbowTable.cpp
 
-HashReduc.o : HashReduc.cpp HashReduc.h g++ -O2 HashReduc.cpp -L/Users/Alexis/Desktop/crypto++/ -lcryptopp - o HashReduc.o
+HashReduc.o: HashReduc.cpp HashReduc.h
+	g++ -Wall -c HashReduc.cpp -L/Users/anthonydebruyn/Documents/ULB/MA1/Computer\ Security/Projets/Rainbow/Rainbow/rainbow/crypto++ -lcryptopp
 
-Dictionary.o : Dictionary.cpp Dictionary.h g++ -O2 Dictionary.cpp -L/Users/Alexis/Desktop/crypto++/ -lcryptopp - o Dictionary.o
+Dictionary.o: Dictionary.cpp Dictionary.h 
+	g++ -Wall -c Dictionary.cpp
 
-FindReduction.o : FindReduction.cpp g++ -O2 FindReduction.cpp --L/Users/Alexis/Desktop/crypto++/ -lcryptopp - o FindReduction.o
