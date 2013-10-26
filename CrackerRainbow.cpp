@@ -66,7 +66,7 @@ void CrackerRainbow::findPassword(bitset<24> stolenFingerprint)
 
 }
 
-vector<bitset<12>> CrackerRainbow::getKeysFound() const
+vector<bitset<12> > CrackerRainbow::getKeysFound() const
 {
     return keysFound;
 }

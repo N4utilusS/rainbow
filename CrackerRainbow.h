@@ -18,12 +18,12 @@ public:
     CrackerRainbow();
     ~CrackerRainbow();
     void findPassword(bitset<24> stolenFingerprint);
-    vector<bitset<12>> getKeysFound() const;
+    vector<bitset<12> > getKeysFound() const;
 
 private:
     Dictionary dico;
     RainbowTable *RT;
-    vector<bitset<12>> keysFound;   // Add the matching passwords.
+    vector<bitset<12> > keysFound;   // Add the matching passwords.
 
 };
 

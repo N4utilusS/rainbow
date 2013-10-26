@@ -15,20 +15,24 @@ int main()
 
     do{
         cout << "Please enter your fingerprint" << endl;
-        for (int i = 0; i < 24; i++) cin >> stolenFingerprint[i];
+        int a;
+        for (int i = 0; i < 24; i++){
+			 cin >> a;
+			 stolenFingerprint.set(i, a);
+		 }
 
         CrackerRainbow CR;
 
         CR.findPassword(stolenFingerprint);
 
-        vector<bitset<12>> v = CR.getKeysFound();
+        vector<bitset<12> > v = CR.getKeysFound();
 
-        for (vector<bitset<12>>::iterator it = v.begin(); it < v.end(); it++)
+        for (vector<bitset<12> >::iterator it = v.begin(); it < v.end(); it++)
             cout << *it << endl;
 
         cout << endl << "Do you want to play again ? (y/n)" << endl;
         cin >> answer;
-        if(answer == "n") play = false;
+        if(answer == 'n') play = false;
 
     } while(play);
 
