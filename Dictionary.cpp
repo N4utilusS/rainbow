@@ -1,10 +1,8 @@
 #include "Dictionary.h"
 
 Dictionary::Dictionary(){
-    for(int i=0;i<4096;i++){
-        dico[i] = i;
+    for(int i=0;i<4096;i++)
         availability[i] = true;
-    }
     
 }
 

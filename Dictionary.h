@@ -14,7 +14,6 @@ public:
 
 private:
 
-    bitset<12> dico[4096];
     bool availability[4096];
 };
 
