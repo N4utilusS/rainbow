@@ -13,8 +13,8 @@ class RainbowTable{
 public:
 
     RainbowTable(Dictionary &dico);
-    bitset<12> checkRainbowTable(bitset<24> fingerprint, bool& foundInRT) const;
-    bitset<12> realPassword(bitset<12> password, bitset<24> stolenFingerprint) const;
+    bool isInRT(bitset<24> fingerprint, bitset<12> &password) const;
+    bool FoundRealPassword(bitset<12> &password, bitset<24> stolenFingerprint) const;
     void addEntry(int i, bitset<24> fingerprint);
 
 private:

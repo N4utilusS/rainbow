@@ -20,7 +20,7 @@ int main()
     int r;
     
     do{
-        cout << "Which type of value ? (2/10/16) :" << endl;
+        cout << endl << "Which type of value ? (2/10/16) :" << endl;
         
         cin >> response;
         
@@ -38,7 +38,6 @@ int main()
         }
         
         bitset<24> stolenFingerprint(r);
-        cout << "bitset : " << stolenFingerprint << endl;
         
         // Release the Kraken.
         
@@ -61,7 +60,7 @@ int main()
         
         
         
-        cout << endl << "Do you want to play again ? (y/n) ";
+        cout << endl << "Do you wish to release the Kraken again ? (y/n) ";
         cin >> answer;
         
     } while(answer == 'y');

@@ -54,38 +54,6 @@ int main(int argc, char* argv[])
     short int tabCol[size];
     checkReduction(PossRed, tabFingerprint, tabCol);
 
-    
-//    bitset<12> p0(string("000010001000")), p1(string("111011010001"));
-//    cout << "Hashing " << endl << hashing(p0) << endl << hashing(p1) << endl;
-	
-	
-	
-//   byte key[DES::DEFAULT_KEYLENGTH]={0x00,0x00,0x00,0x00,0x00,0x00,0x04,0xC1};
-//   byte plainText[DES::BLOCKSIZE]={0xA4,0xA0,0x00,0x59,0x7C,0x5E,0x20,0xC1};
-//   byte cypheredText[DES::BLOCKSIZE];
-//   byte decipheredText[DES::BLOCKSIZE];
-//   string text;
-//
-//   text=print(key);
-//   cout << "key: " << text << endl;
-//   text=print(plainText);
-//   cout << "plainText: " << text << endl;
-//
-//   //!--! faudra ajouter des try,catch... voir driver.cpp
-//   //Encryption
-//   ECB_Mode<DES>::Encryption e(key,sizeof(key));
-//   e.ProcessData(cypheredText,plainText,sizeof(plainText));
-//
-//   //cout << "Algorithm: " << e.AlgorithmName() << endl;
-//   text=print(cypheredText);
-//   cout << "Cyphered Text: " << text << endl;
-//
-//   //Decryption
-//   ECB_Mode<DES>::Decryption d(key,sizeof(key));
-//   d.ProcessData(decipheredText,cypheredText,sizeof(cypheredText));
-//
-//   text=print(decipheredText);
-//   cout << "Deciphered Text: " << text << endl;
 
    return 0;
 }
