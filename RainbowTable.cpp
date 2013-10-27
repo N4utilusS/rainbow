@@ -12,7 +12,6 @@ RainbowTable::RainbowTable(Dictionary &dico)
         if(dico.getAvailability(i)) // If this entry is available.
         {
             pass[0] = i;
-            cout << pass[0] << endl;
             for(int j = 1; j <= 4; j++)
             {
                 fingerprint = hashing(pass[j-1]);
@@ -20,6 +19,7 @@ RainbowTable::RainbowTable(Dictionary &dico)
             }
 
             fingerprint = hashing(pass[4]);
+            
             password = checkRainbowTable(fingerprint,foundInRT); //check if the fingerprint is already in the table, in order to avoid collisions
 
             if(foundInRT)
@@ -54,6 +54,7 @@ bitset<12> RainbowTable::checkRainbowTable(bitset<24> fingerprint, bool& foundIn
 		if (RTf[min].to_ulong() == fingerprint.to_ulong()) {
             foundInRT = true;
             //cout << fingerprint << " ?= " << RTf[min] << endl;
+            //cout << RTp[min] << " ?= ";
             return RTp[min];
         }
     }
@@ -69,7 +70,7 @@ bitset<12> RainbowTable::realPassword(bitset<12> password, bitset<24> stolenFing
     for(int i = 1; i <= 4; i++)
     {
         fingerprint = hashing(password);
-        //cout << fingerprint << endl;
+        cout << i << " " << fingerprint << endl;
 
         if(fingerprint == stolenFingerprint){
             cout << "*** " << password << " " << hashing(password) << endl;
@@ -103,5 +104,18 @@ void RainbowTable::addEntry(int i, bitset<24> fingerprint)
 
     RTf.insert(RTf.begin()+place, fingerprint);
     RTp.insert(RTp.begin()+place, i);
+    
+    bitset<12> pass[5];
+    pass[0] = i;
+    cout << pass[0];
+    for(int j = 1; j <= 4; j++)
+    {
+        fingerprint = hashing(pass[j-1]);
+        pass[j] = reduction(fingerprint,j);
+        //cout << " -H> " << fingerprint << " -R> " << pass[j];
+    }
+    
+    fingerprint = hashing(pass[4]);
+    cout << " -H> " << fingerprint << endl;
 }
 

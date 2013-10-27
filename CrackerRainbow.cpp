@@ -41,11 +41,12 @@ void CrackerRainbow::findPassword(bitset<24> stolenFingerprint)
                 password = reduction(fingerprint,i);
                 fingerprint = hashing(password);
             }
-
+            
             password = RT->checkRainbowTable(fingerprint, foundInRT);  // Is this new fp in the RT ?
-
+            
             if(foundInRT)    // Fingerprint found in RT
             {
+                cout << fingerprint << endl;
                 password = RT->realPassword(password,stolenFingerprint);
                 
                 bool toBeAdded = true;  // Voir si le password n'est pas déjà dans la liste.

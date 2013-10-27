@@ -17,13 +17,27 @@ int main()
     char answer;
     string response;
     CrackerRainbow CR;  // The cracking machine.
+    int r;
     
     do{
-        cout << "Please enter your fingerprint :" << endl;
+        cout << "Which type of value ? (2/10/16) :" << endl;
         
         cin >> response;
-        cout << response << endl;
-        bitset<24> stolenFingerprint(stoi(response,0,0));
+        
+        cout << "Please enter your fingerprint :" << endl;
+        
+        if (response == "2") {
+            cin >> response;
+            r = stoi(response,0,2);
+        } else if (response == "16"){
+            cin >> response;
+            r = stoi(response,0,16);
+        } else {
+            cin >> response;
+            r = stoi(response,0,10);
+        }
+        
+        bitset<24> stolenFingerprint(r);
         cout << "bitset : " << stolenFingerprint << endl;
         
         // Release the Kraken.

@@ -290,16 +290,15 @@ void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096]
     //main algo to check all the reduction functions
     //!--! will need to use tabCollisions and a counter...
     
-    int **best = new int*[10]();
+    double **best = new double*[10]();
     for (int i = 0; i < 10; ++i) {
-        best[i] = new int[3]();
+        best[i] = new double[3]();
         best[i][0] = -1;
         best[i][1] = 1500;
         best[i][2] = 0;
     }
-    int presentBest = 1500, temp;
     
-    int idPass = 0;
+    double temp, numberOfPassWithCol = 0, AverageNumOfFPerCol = 0, idPass = 0, presentBest = 1500;
     
     for(int i=0, k = 0; i<size; i++, k++)
     {
@@ -323,7 +322,13 @@ void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096]
             }
         }
         
-        if((temp = idPass + tabCol[i]) <= presentBest)
+        for (int z; z < 4096; ++z) {
+            if (tabPass[z] > 1) numberOfPassWithCol++;
+        }
+        
+        AverageNumOfFPerCol = tabCol[i]/numberOfPassWithCol;
+        
+        if((temp = idPass + AverageNumOfFPerCol) <= presentBest)
         {
             for (int k = 0; k < 10; ++k) {
                 if (temp < (best[k][1] + best[k][2])) {
@@ -331,10 +336,10 @@ void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096]
                     for (int l = 9; l > k; --l) {
                         best[l] = best[l-1];
                     }
-                    best[k] = new int[3]();
-                    best[k][0] = i;
+                    best[k] = new double[3]();
+                    best[k][0] = PossRed[i].to_ulong();
                     best[k][1] = idPass;
-                    best[k][2] = tabCol[i];
+                    best[k][2] = AverageNumOfFPerCol;
                     presentBest = best[9][1] + best[9][2];
                     break;
                 }
@@ -346,7 +351,7 @@ void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096]
             cout << endl << i << "this temp = " << temp << endl;
             k = 0;
             for (int i = 0; i < 10; ++i) {
-                cout << best[i][0] << "-" << best[i][1] << "-" << best[i][2] << endl;
+                cout << best[i][0] << " - " << best[i][1] << " - " << best[i][2] << endl;
             }
         }
     }

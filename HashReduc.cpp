@@ -64,12 +64,16 @@ bitset<12> reduction(bitset<24> fingerprint, int i)
     return password;
 }
 
-//take the 12 least bits
 bitset<12> reduction1(bitset<24> fingerprint)
 {
     bitset<12> password;
-    for(int i=12;i<24;i++)
-        password[i-12]=fingerprint[i];
+    bitset<24> reductionFunction(3.7738e+06);
+    int size = fingerprint.size(); //size=24
+    
+    for(int i = 0, j = 0; i<size; i++)
+        if(reductionFunction[i] == 1)
+            password[j++] = fingerprint[i];
+    
     return password;
 }
 
@@ -77,8 +81,13 @@ bitset<12> reduction1(bitset<24> fingerprint)
 bitset<12> reduction2(bitset<24> fingerprint)
 {
     bitset<12> password;
-    for(int i=0;i<12;i++)
-        password[i]=fingerprint[i];
+    bitset<24> reductionFunction(2.7486e+06);
+    int size = fingerprint.size(); //size=24
+    
+    for(int i = 0, j = 0; i<size; i++)
+        if(reductionFunction[i] == 1)
+            password[j++] = fingerprint[i];
+    
     return password;
 }
 
@@ -86,9 +95,13 @@ bitset<12> reduction2(bitset<24> fingerprint)
 bitset<12> reduction3(bitset<24> fingerprint)
 {
     bitset<12> password;
-    for(int i=0;i<24;i++)
-        if(i%2==0)
-            password[i/2]=fingerprint[i];
+    bitset<24> reductionFunction(1.63544e+07);
+    int size = fingerprint.size(); //size=24
+    
+    for(int i = 0, j = 0; i<size; i++)
+        if(reductionFunction[i] == 1)
+            password[j++] = fingerprint[i];
+    
     return password;
 }
 
@@ -96,8 +109,12 @@ bitset<12> reduction3(bitset<24> fingerprint)
 bitset<12> reduction4(bitset<24> fingerprint)
 {
     bitset<12> password;
-    for(int i=0;i<24;i++)
-        if(i%2==1)
-            password[(i-1)/2]=fingerprint[i];
+    bitset<24> reductionFunction(6.66478e+06);
+    int size = fingerprint.size(); //size=24
+    
+    for(int i = 0, j = 0; i<size; i++)
+        if(reductionFunction[i] == 1)
+            password[j++] = fingerprint[i];
+    
     return password;
 }
