@@ -1,3 +1,8 @@
+/*
+ g++ -O2 main.cpp CrackerRainbow.cpp RainbowTable.cpp Dictionary.cpp HashReduc.cpp -L/Users/anthonydebruyn/Documents/ULB/MA1/Computer\ Security/Projets/Rainbow/Rainbow/rainbow/crypto++ -lcryptopp -o Project
+ 
+ */
+
 #include <iostream>
 #include <bitset>
 #include "CrackerRainbow.h"

@@ -1,3 +1,6 @@
+// g++ -O2 DES.cpp -L/Users/anthonydebruyn/Documents/ULB/MA1/Computer\ Security/Projets/Rainbow/Rainbow/rainbow/crypto++ -lcryptopp -o DES
+
+
 #include <iostream>
 #include <string>
 #include "crypto++/des.h"
@@ -291,10 +294,10 @@ void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096]
     for (int i = 0; i < 10; ++i) {
         best[i] = new int[3]();
         best[i][0] = -1;
-        best[i][1] = 10;
+        best[i][1] = 1500;
         best[i][2] = 0;
     }
-    int presentBest = 10, temp;
+    int presentBest = 1500, temp;
     
     int idPass = 0;
     
@@ -319,6 +322,7 @@ void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096]
                     tabCol[i]++;
             }
         }
+        
         if((temp = idPass + tabCol[i]) <= presentBest)
         {
             for (int k = 0; k < 10; ++k) {
@@ -327,14 +331,19 @@ void checkReduction(vector<bitset<24> > PossRed, bitset<24> tabFingerprint[4096]
                     for (int l = 9; l > k; --l) {
                         best[l] = best[l-1];
                     }
+                    best[k] = new int[3]();
+                    best[k][0] = i;
+                    best[k][1] = idPass;
+                    best[k][2] = tabCol[i];
                     presentBest = best[9][1] + best[9][2];
+                    break;
                 }
             }
             
         }
         //cout
         if (k == 10000) {
-            cout << endl << i << endl;
+            cout << endl << i << "this temp = " << temp << endl;
             k = 0;
             for (int i = 0; i < 10; ++i) {
                 cout << best[i][0] << "-" << best[i][1] << "-" << best[i][2] << endl;

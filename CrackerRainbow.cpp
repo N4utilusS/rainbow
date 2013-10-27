@@ -17,8 +17,7 @@ void CrackerRainbow::findPassword(bitset<24> stolenFingerprint)
 {
     bool foundInRT = false;
     bitset<12> password;
-    bitset<24> fingerprint, fingerprintPrime;
-    queue<bitset<24> > fifo;
+    bitset<24> fingerprint;
     
     keysFound.clear();  // Clear the vector for a new run.
     
@@ -29,7 +28,8 @@ void CrackerRainbow::findPassword(bitset<24> stolenFingerprint)
     {
         password = RT->realPassword(password,stolenFingerprint);
         keysFound.push_back(password);
-        //cout << "Found a key : " << password << endl;
+        foundInRT = false;
+        cout << "Found a key step 1 : " << password << endl;
     }
     else            // stolenFingerprint not found in RT, step 2
     {
@@ -54,9 +54,9 @@ void CrackerRainbow::findPassword(bitset<24> stolenFingerprint)
                 
                 if (toBeAdded) {
                     keysFound.push_back(password);
-                    //cout << "Found a key : " << password << endl;
+                    cout << "Found a key step 2 : " << j << " " << password << endl;
                 }
-                
+                foundInRT = false;
             }
 
         }
