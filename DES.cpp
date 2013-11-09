@@ -1,6 +1,3 @@
-// g++ -O2 DES.cpp -L/Users/anthonydebruyn/Documents/ULB/MA1/Computer\ Security/Projets/Rainbow/Rainbow/rainbow/crypto++ -lcryptopp -o DES
-
-
 #include <iostream>
 #include <string>
 #include "crypto++/des.h"
@@ -29,7 +26,6 @@ bitset<24> hashing(bitset<12> password);
 
 int main(int argc, char* argv[])
 {
-    
     bitset<24> num;
     vector<bitset<24> > PossRed;
     
@@ -40,6 +36,16 @@ int main(int argc, char* argv[])
     bitset<24> tabFingerprint[4096];
     for(int i=0; i<4096; i++)
         tabFingerprint[i]=hashing(i);
+    /*bitset<12> var;
+    ofstream f;
+    f.open("dicoFp.txt");
+    for(int i=0; i<4096; i++)
+    {
+       var=i;
+        tabFingerprint[i]=hashing(i);
+      f << tabFingerprint[i] << endl;
+    }
+    f.close();*/
     
     //check how many collisions we have initially with the hash function
     vector< vector<int> > tabCollisions;
@@ -53,7 +59,6 @@ int main(int argc, char* argv[])
     int size=PossRed.size();
     short int tabCol[size];
     checkReduction(PossRed, tabFingerprint, tabCol);
-
 
    return 0;
 }

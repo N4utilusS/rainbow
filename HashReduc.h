@@ -1,5 +1,3 @@
-
-
 #ifndef Rainbow_HashReduc_h
 #define Rainbow_HashReduc_h
 
