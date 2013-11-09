@@ -3,7 +3,7 @@
 #include "CrackerRainbow.h"
 #include "HashReduc.h"
 #include <vector>
-#include <string>
+//#include <string>
 
 using namespace std;
 
@@ -36,7 +36,6 @@ int main()
       cout << endl << "Which type of value ? (2/10/16) :" << endl;
       cin >> response;
       cout << "Please enter your fingerprint :" << endl;
-      cin >> response;
         
       if (response == "2") {
          cin >> response;
@@ -50,7 +49,7 @@ int main()
       }
 
       bitset<24> stolenFingerprint(r);
-      //bitset<24> stolenFingerprint(string("001110111110110101101111")); //give a password
+     // bitset<24> stolenFingerprint(string("001110111110110101101111")); //give a password
       
       /*response=tabFingerprint[count];
       bitset<24> stolenFingerprint(response);
